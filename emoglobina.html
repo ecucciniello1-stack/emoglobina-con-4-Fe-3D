@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<title>Emoglobina con 4 Fe - 3Dmol.js</title>
+<script src="https://3Dmol.csb.pitt.edu/build/3Dmol-min.js"></script>
+<style>
+  html,body{height:100%;margin:0;background:#fff}
+  #viewer{width:100%;height:100vh}
+</style>
+</head>
+<body>
+<div id="viewer"></div>
+<script>
+  const viewer = $3Dmol.createViewer("viewer",{backgroundColor:'white'});
+
+  // Carica una struttura di emoglobina (es. 2HHB - deoxy human hemoglobin)
+  $3Dmol.download("pdb:2HHB", viewer, {}, function() {
+    // Rappresentazione principale della proteina come cartoon
+    viewer.setStyle({}, {cartoon:{color:'spectrum'}});
+
+    // Mostra i gruppi eme come stick (resn HEM o HEME a seconda del PDB)
+    viewer.addStyle({resn:'HEM'}, {stick:{radius:0.2}});
+    viewer.addStyle({resn:'HEME'}, {stick:{radius:0.2}});
+
+    // Evidenzia gli atomi di ferro (Fe) con sfere grandi e colore arancio
+    viewer.addStyle({elem:'FE'}, {sphere:{radius:0.6, color:'orange'}});
+    viewer.addStyle({elem:'Fe'}, {sphere:{radius:0.6, color:'orange'}});
+
+    // Opzionale: mostra anche gli eterogruppi porfirinici in colori standard
+    viewer.addStyle({het:true}, {stick:{colorscheme:'element'}});
+
+    viewer.zoomTo();
+    viewer.render();
+
+    // Stampare posizione e numero degli atomi Fe nella console (controllo)
+    const atoms = viewer.getModel().selectedAtoms({elem:'FE'}).concat(viewer.getModel().selectedAtoms({elem:'Fe'}));
+    console.log("Fe atoms trovati:", atoms.length, atoms.map(a=>({resn:a.resn, resi:a.resi, x:a.x, y:a.y, z:a.z})));
+  });
+</script>
+</body>
+</html>
